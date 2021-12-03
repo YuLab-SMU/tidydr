@@ -32,6 +32,7 @@ element_line2 <- function (colour = NULL, size = NULL, linetype = NULL, lineend 
 ##' @importFrom grid gpar
 ##' @importFrom grid grob
 ##' @method element_grob element_line2
+##' @export
 element_grob.element_line2 <- function (element, colour = NULL, size = NULL, 
     linetype = NULL, lineend = NULL, default.units = "npc", id.lengths = NULL, 
     ...) {
@@ -41,16 +42,10 @@ element_grob.element_line2 <- function (element, colour = NULL, size = NULL,
     element_gp <- gpar(col = element$colour, fill = element$colour, 
         lwd = len0_null(element$size * .pt), lty = element$linetype, 
         lineend = element$lineend)
-    arrow <- if (is.logical(element$arrow) && !element$arrow) {
-        NULL
-    }
-    else {
-        element$arrow
-    }
 
     grob(default.units = default.units, 
         gp = modify_list(element_gp, gp), 
-        arrow = arrow, id=element$id, 
+        arrow = element$arrow, id=element$id, 
         xlength = element$xlength,
         ylength = element$ylength, 
         cl="draxis")   

@@ -7,7 +7,7 @@
 theme_dr(
   xlength = 0.3,
   ylength = 0.3,
-  arrow = arrow(length = unit(0.15, "inches"), type = "closed")
+  arrow = grid::arrow(length = unit(0.15, "inches"), type = "closed")
 )
 }
 \arguments{

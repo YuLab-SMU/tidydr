@@ -11,7 +11,8 @@
 ##' @importFrom grid unit
 ##' @author Guangchuang Yu
 theme_dr <- function(xlength = 0.3, ylength=0.3, 
-                    arrow = arrow(length=unit(0.15, "inches"), type="closed")) {
+                    arrow = grid::arrow(length=unit(0.15, "inches"), type="closed")
+                ) {
     theme_noaxis(
         axis.line.x.bottom=element_line2(id=1, xlength = xlength, arrow = arrow),
         axis.line.y.left=element_line2(id=2, ylength = ylength, arrow = arrow), 

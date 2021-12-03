@@ -1,6 +1,7 @@
 ##' @importFrom grid drawDetails
 ##' @importFrom grid grid.segments
 ##' @method drawDetails draxis
+##' @export
 drawDetails.draxis <- function(x, recording=TRUE, id) {
     if (x$id == 1) {
         ## axis.line.x.bottom
