@@ -1,16 +1,37 @@
+##' element_line2 for drawing shorten axis lines 
+##'
+##' @title element_line2
+##' @param colour line colour
+##' @param size line size in pts
+##' @param linetype line type
+##' @param lineend line end style (round, butt, square)
+##' @param color aliase to colour
+##' @param arrow arrow specification, as created by 'grid::arrow()'
+##' @param inherit.blank whether inherit 'element_blank'
+##' @param id 1 or 2, 1 for axis.line.x.bottom and 2 for axis.line.y.left, only these two axes supported
+##' @param xlength length of x axis
+##' @param ylength length of y axis
+##' @param ... additional parameters
+##' @return element_line2 object
+##' @export
+##' @author Guangchuang Yu
 element_line2 <- function (colour = NULL, size = NULL, linetype = NULL, lineend = NULL, 
-    color = NULL, arrow = grid::arrow(length=unit(0.15, "inches")), inherit.blank = FALSE, id, ...) {
+    color = NULL, arrow = NULL, inherit.blank = FALSE, id, xlength=0.3, ylength=0.3, ...) {
     if (!is.null(color)) 
         colour <- color
     if (is.null(arrow)) 
         arrow <- FALSE
     structure(list(colour = colour, size = size, linetype = linetype, 
-        lineend = lineend, arrow = arrow, inherit.blank = inherit.blank, id = id,
+        lineend = lineend, arrow = arrow, inherit.blank = inherit.blank, 
+        id = id, xlength = xlength, ylength = ylength,
         ...), 
         class = c("element_line2", "element_line", "element"))
 }
 
-
+##' @importFrom ggplot2 element_grob
+##' @importFrom grid gpar
+##' @importFrom grid grob
+##' @method element_grob element_line2
 element_grob.element_line2 <- function (element, colour = NULL, size = NULL, 
     linetype = NULL, lineend = NULL, default.units = "npc", id.lengths = NULL, 
     ...) {
@@ -29,18 +50,11 @@ element_grob.element_line2 <- function (element, colour = NULL, size = NULL,
 
     grob(default.units = default.units, 
         gp = modify_list(element_gp, gp), 
-        arrow = arrow, id=element$id, cl="draxis")   
+        arrow = arrow, id=element$id, 
+        xlength = element$xlength,
+        ylength = element$ylength, 
+        cl="draxis")   
 
 }
 
-drawDetails.draxis <- function(x, recording=TRUE, id) {
-    if (x$id == 1) {
-        ## axis.line.x.bottom
-        grid.segments(x0=0, x1=0.3, y0=1, y1=1, default.units = x$default.units, 
-                    gp =  x$gp, arrow = x$arrow)
-    } else {
-        ## axis.line.y.left
-        grid.segments(x0=1, x1=1, y0=0, y1=0.3, default.units = x$default.units, 
-                    gp =  x$gp, arrow = x$arrow)
-    }
-}
+

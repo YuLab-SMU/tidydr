@@ -1,7 +1,18 @@
+##' dimensional reduction
+##' 
+##' This function call the user-provided function ('fun') to 
+##' perform dimensional reduction on the input data ('data')
+##' @title dr
+##' @param data input data
+##' @param fun function to perform dimensional reduction
+##' @param ... additional parameters passed to 'fun'
+##' @return DrResult object
+##' @importFrom rlang env_name
+##' @export
+##' @author Guangchuang Yu
 dr <- function(data, fun, ...) {
-    where <- environment(fun = fun) %>%
-        rlang::env_name() %>%
-        sub(".*:", "", .)
+    where <- env_name(environment(fun = fun))
+    where <- sub(".*:", "", where)
 
     as.dr(fun, data, where=where, ...)
 }
@@ -22,21 +33,3 @@ as.dr <- function(fun, data, where, ...) {
     )
 }
 
-
-dr_extract <- function(result) UseMethod("dr_extract")
-
-dr_extract.Rtsne <- function(result) {
-    as.data.frame(result$Y)
-}
-
-dr_extract.prcomp <- function(result) {
-    as.data.frame(result$x)
-}
-
-fortify.DrResult <- function(model, data, ...) {
-    model$drdata
-}
-
-autoplot.DrResult <- function(object, ...) {
-    ggplot(object, aes_(~Dim1, ~Dim2)) + geom_point()
-}
