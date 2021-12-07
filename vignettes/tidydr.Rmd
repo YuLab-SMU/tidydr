@@ -1,0 +1,82 @@
+---
+title: "Unify Dimensionality Reduction Results"
+author: "Guangchuang Yu\\
+
+        School of Basic Medical Sciences, Southern Medical University"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    toc: true
+    theme: cayman
+    highlight: github
+  pdf_document:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{tidydr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+```{r style, echo=FALSE, results="asis", message=FALSE}
+knitr::opts_chunk$set(tidy = FALSE,
+		   message = FALSE)
+```
+
+
+
+
+## Interface for dimensionality reduction methods
+
+
+```{r echo=FALSE, results='hide', message=FALSE}
+library(ggplot2)
+library(tidydr) 
+```
+
+
+```{r}
+library(tidydr)
+x <- dr(data = iris[,1:4], fun = prcomp)
+```
+
+The `dr()` function apply the function, `fun`, and (if any) parameters to analyze the input 'data'. 
+
+The data can be original data matrix (or data frame), or distance matrix (or distance object), depending on the requirement of the DR method (specify by the 'fun' parameter).
+
+Currently, the `dr()` function works for the following methods that require data matrix (or data frame).
+
++ `stats::prcomp()`
++ `Rtsne::Rtsne()`
+
+And works for the following methods that require distance matrix (or distance object).
+
+- `stats::cmdscale()`
+- `MASS::sammon()`
+- `vegan::metaMDS()`
+- `ape::pcoa()`
+- `smacof::mds()`
+- `vegan::wcmdscale()`
+- `ecodist::pco()`
+- `labdsv::pco()`
+- `ade4::dudi.pco()`
+
+## Visualization
+
+The `tidydr` package extends `ggplot()` to support the output of `dr()` function. 
+
+Associated data (e.g., group information) can be integrated to scale the color, shape or size of data points. The data should be provided via the `metadata` parameter. It allows a vector (will be stored in `.group`) or a data frame.
+
+```{r}
+library(ggplot2)
+## metadata as a vector
+ggplot(x, aes(Dim1, Dim2), metadata=iris$Species) + 
+  geom_point(aes(color=.group))
+```
+
+Users can use `autoplot()` as a shortcut. This package provide a theme, `theme_dr()`, to allow using shorten axes. 
+
+```{r}
+## metadata as a data frame
+autoplot(x, aes(color=Species), metadata = iris[, 5, drop=FALSE]) +
+  theme_minimal() + theme_dr()
+```

@@ -23,6 +23,10 @@ dimensional reduction
 This function call the user-provided function ('fun') to
 perform dimensional reduction on the input data ('data')
 }
+\examples{
+x = dr(iris[,1:4], prcomp)
+autoplot(x, aes(color=.group), metadata=iris$Species)
+}
 \author{
 Guangchuang Yu
 }

@@ -1,5 +1,8 @@
-# tidydr 0.0.1.991
+# tidydr 0.0.2
 
++ add vignette (2021-12-07, Tue)
++ `print()` method for `DrResult`
++ support `metadata` in `fortify()`, `ggplot()` and `autoplot()`
 + update `dr_extract` to support methods work for distance objects (2021-12-5, Sun)
     - `stats::cmdscale`
     - `MASS::sammon`

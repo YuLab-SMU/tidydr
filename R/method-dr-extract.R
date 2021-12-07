@@ -8,22 +8,6 @@
 ##' @author Guangchuang Yu
 dr_extract <- function(result) UseMethod("dr_extract")
 
-##' @method dr_extract default
-dr_extract.default <- function(result) {
-    drdata <- eigenvalue <- stress <- NULL
-    if ("points" %in% names(result)) {
-        drdata <- as.data.frame(result$points)
-    }
-    if ("eig" %in% names(result)) {
-        eigenvalue <- as.numeric(result$eig)
-    }
-    if ("stress" %in% names(result)) {
-        stress <- result$stress
-        stress <- format(stress, digits=4)
-    }
-    list(drdata = drdata, eigenvalue = eigenvalue, stress = stress)
-}
-
 
 ##' @method dr_extract Rtsne
 dr_extract.Rtsne <- function(result) {
@@ -43,36 +27,6 @@ dr_extract.prcomp <- function(result) {
     list(drdata = drdata, eigenvalue = eigenvalue, stress = stress)
 }
 
-
-##' @method dr_extract MASS
-dr_extract.MASS <- function(result) {
-    ## MASS::sammon
-    drdata <- as.data.frame(result$points)
-    eigenvalue <- NULL
-    stress <- result$stress
-    stress <- format(stress, digits=4)
-    list(drdata = drdata, eigenvalue = eigenvalue, stress = stress)
-}
-
-##' @method dr_extract monoMDS
-dr_extract.monoMDS <- function(result) {
-    ## vegan::metaMDS
-    drdata <- as.data.frame(result$points)
-    eigenvalue <- NULL
-    stress <- result$stress
-    stress <- format(stress, digits=4)
-    list(drdata = drdata, eigenvalue = eigenvalue, stress = stress)
-}
-
-
-##' @method dr_extract wcmdscale
-dr_extract.wcmdscale <- function(result) {
-    ## vegan::wcmdscale
-    drdata <- as.data.frame(result$points)
-    stress <- NULL
-    eigenvalue <- as.numeric(result$eig)
-    list(drdata = drdata, eigenvalue = eigenvalue, stress = stress)
-}
 
 ##' @method dr_extract ape
 dr_extract.ape <- function(result) {
@@ -102,14 +56,6 @@ dr_extract.ecodist <- function(result) {
     list(drdata = drdata, eigenvalue = eigenvalue, stress = stress)
 }
 
-##' @method dr_extract labdsv
-dr_extract.labdsv <- function(result) {
-    ## labdsv::pco
-    drdata <- as.data.frame(result$points)
-    stress <- NULL
-    eigenvalue <- as.numeric(result$eig)
-    list(drdata = drdata, eigenvalue = eigenvalue, stress = stress)
-}
 
 ##' @method dr_extract ade4
 dr_extract.ade4 <- function(result) {
@@ -119,3 +65,41 @@ dr_extract.ade4 <- function(result) {
     eigenvalue <- as.numeric(result$eig)
     list(drdata = drdata, eigenvalue = eigenvalue, stress = stress)
 }
+
+
+
+
+##' @method dr_extract default
+dr_extract.default <- function(result) {
+    drdata <- eigenvalue <- stress <- NULL
+    if ("points" %in% names(result)) {
+        drdata <- as.data.frame(result$points)
+    }
+    if ("eig" %in% names(result)) {
+        eigenvalue <- as.numeric(result$eig)
+    }
+    if ("stress" %in% names(result)) {
+        stress <- result$stress
+        stress <- format(stress, digits=4)
+    }
+    list(drdata = drdata, eigenvalue = eigenvalue, stress = stress)
+}
+
+## vegan::metaMDS
+## no eigenvalue
+##' @method dr_extract monoMDS
+dr_extract.monoMDS <- dr_extract.default
+    
+## MASS::sammon
+##' @method dr_extract MASS
+dr_extract.MASS <- dr_extract.monoMDS
+
+## vegan::wcmdscale
+## no stress
+##' @method dr_extract wcmdscale
+dr_extract.wcmdscale <- dr_extract.default
+    
+## labdsv::pco
+##' @method dr_extract labdsv
+dr_extract.labdsv <- dr_extract.wcmdscale
+
