@@ -6,7 +6,7 @@ Authors@R: c(
        person("Shuangbin",   "Xu",     email = "xshuangbin@163.com",      role = "aut", comment = c(ORCID="0000-0003-3513-5362")),
        person("Erqiang",     "Hu",     email = "13766876214@163.com",     role = "ctb")
        )
-Description: Dimensionality reduction (DR) is widely used in many domain for analyzing and visualizing high-dimensional data. 'tidydr' provides uniform output and is conpatible with multiple methods, including 'prcomp', 'mds', 'Rtsne'. etc.
+Description: Dimensionality reduction (DR) is widely used in many domain for analyzing and visualizing high-dimensional data. 'tidydr' provides uniform output and is compatible with multiple methods, including 'prcomp', 'mds', 'Rtsne'. etc.
 Imports:
     ggplot2,
     grid,

@@ -78,5 +78,5 @@ Users can use `autoplot()` as a shortcut. This package provide a theme, `theme_d
 ```{r}
 ## metadata as a data frame
 autoplot(x, aes(color=Species), metadata = iris[, 5, drop=FALSE]) +
-  theme_minimal() + theme_dr()
+  theme_dr()
 ```

@@ -7,13 +7,15 @@
 ##' @param arrow arrow specification, as created by 'grid::arrow()'
 ##' @export
 ##' @importFrom ggplot2 element_text
+##' @importFrom ggplot2 theme_minimal
+##' @importFrom ggplot2 %+replace%
 ##' @importFrom grid arrow
 ##' @importFrom grid unit
 ##' @author Guangchuang Yu
 theme_dr <- function(xlength = 0.3, ylength=0.3, 
                     arrow = grid::arrow(length=unit(0.15, "inches"), type="closed")
                 ) {
-    theme_noaxis(
+    theme_minimal() %+replace% theme_noaxis(
         axis.line.x.bottom=element_line2(id=1, xlength = xlength, arrow = arrow),
         axis.line.y.left=element_line2(id=2, ylength = ylength, arrow = arrow), 
         axis.title=element_text(hjust=0.1))
