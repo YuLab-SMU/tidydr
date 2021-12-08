@@ -9,6 +9,9 @@ theme_noaxis(...)
 \arguments{
 \item{...}{additional theme setting}
 }
+\value{
+a theme object that disable axes
+}
 \description{
 theme that remove axis
 }

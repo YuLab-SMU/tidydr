@@ -10,7 +10,7 @@ dr_extract(result)
 \item{result}{DrResult object}
 }
 \value{
-data frame
+a list that contains components to construct a 'DrResult' object.
 }
 \description{
 dr_extract generic

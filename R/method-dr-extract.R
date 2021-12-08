@@ -3,7 +3,7 @@
 ##' @title dr_extract
 ##' @rdname dr-extract
 ##' @param result DrResult object
-##' @return data frame
+##' @return a list that contains components to construct a 'DrResult' object.
 ##' @export
 ##' @author Guangchuang Yu
 dr_extract <- function(result) UseMethod("dr_extract")

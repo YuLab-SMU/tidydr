@@ -12,7 +12,7 @@
 ##' @param xlength length of x axis
 ##' @param ylength length of y axis
 ##' @param ... additional parameters
-##' @return element_line2 object
+##' @return element_line2 object, which is a tailored element_line object
 ##' @export
 ##' @author Guangchuang Yu
 element_line2 <- function (colour = NULL, size = NULL, linetype = NULL, lineend = NULL, 

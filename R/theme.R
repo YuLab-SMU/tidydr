@@ -5,6 +5,7 @@
 ##' @param xlength length of x axis
 ##' @param ylength length of y axis
 ##' @param arrow arrow specification, as created by 'grid::arrow()'
+##' @return a theme object with shorten axes
 ##' @export
 ##' @importFrom ggplot2 element_text
 ##' @importFrom ggplot2 theme_minimal
@@ -26,6 +27,7 @@ theme_dr <- function(xlength = 0.3, ylength=0.3,
 ##'
 ##' @title theme_noaxis
 ##' @param ... additional theme setting
+##' @return a theme object that disable axes
 ##' @export
 ##' @importFrom ggplot2 element_blank
 ##' @importFrom ggplot2 theme

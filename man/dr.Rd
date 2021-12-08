@@ -14,7 +14,7 @@ dr(data, fun, ...)
 \item{...}{additional parameters passed to 'fun'}
 }
 \value{
-DrResult object
+a DrResult object, which contains 'data' (original data), 'drdata' (coordination after dimensionality reduction), eigenvalue (standard deviation explained by each dimension) and stress (evaluate the effect of dimensionality reduction)
 }
 \description{
 dimensional reduction

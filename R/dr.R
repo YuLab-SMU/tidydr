@@ -6,7 +6,7 @@
 ##' @param data input data
 ##' @param fun function to perform dimensional reduction
 ##' @param ... additional parameters passed to 'fun'
-##' @return DrResult object
+##' @return a DrResult object, which contains 'data' (original data), 'drdata' (coordination after dimensionality reduction), eigenvalue (standard deviation explained by each dimension) and stress (evaluate the effect of dimensionality reduction)
 ##' @importFrom rlang env_name
 ##' @export
 ##' @examples

@@ -42,7 +42,7 @@ element_line2(
 \item{...}{additional parameters}
 }
 \value{
-element_line2 object
+element_line2 object, which is a tailored element_line object
 }
 \description{
 element_line2 for drawing shorten axis lines

@@ -1,3 +1,8 @@
+# tidydr 0.0.3
+
++ update Rd files with return value (2021-12-08, Wed)
++ use `theme_minimal()` as base theme in `theme_dr()` (2021-12-07, Tue)
+
 # tidydr 0.0.2
 
 + add vignette (2021-12-07, Tue)

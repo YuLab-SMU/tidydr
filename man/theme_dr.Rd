@@ -17,6 +17,9 @@ theme_dr(
 
 \item{arrow}{arrow specification, as created by 'grid::arrow()'}
 }
+\value{
+a theme object with shorten axes
+}
 \description{
 Dimensional reduction scatter plot axis theme
 }
