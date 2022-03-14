@@ -47,6 +47,9 @@ Currently, the `dr()` function works for the following methods that require data
 
 + `stats::prcomp()`
 + `Rtsne::Rtsne()`
++ `uwot::umap()`
++ `uwot::tumap()`
++ `uwot::lvish()`
 
 And works for the following methods that require distance matrix (or distance object).
 

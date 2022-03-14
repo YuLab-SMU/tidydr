@@ -1,3 +1,9 @@
+# tidydr 0.0.4
++ update `dr_extract` to support methods work for distance objects (2022-3-14, Mon)
+    - `uwot::umap()`
+    - `uwot::tumap()`
+    - `uwot::lvish()`
+
 # tidydr 0.0.3
 
 + update Rd files with return value (2021-12-08, Wed)
