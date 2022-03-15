@@ -66,8 +66,16 @@ dr_extract.ade4 <- function(result) {
     list(drdata = drdata, eigenvalue = eigenvalue, stress = stress)
 }
 
-
-
+##' @method dr_extract uwot
+##' @author Lang Zhou
+dr_extract.uwot <- function(result) {
+    ## uwot::umap
+    ## uwot::tumap
+    ## uwot::lvish
+    drdata <- as.data.frame(result)
+    eigenvalue <- stress <- NULL
+    list(drdata = drdata, eigenvalue = eigenvalue, stress = stress)
+}
 
 ##' @method dr_extract default
 dr_extract.default <- function(result) {
