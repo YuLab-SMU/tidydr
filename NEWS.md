@@ -1,4 +1,5 @@
 # tidydr 0.0.4
+
 + added `available_methods()` to show available DR methods (2022-3-15, Tue)
 + update `dr_extract` to support methods work for distance objects (2022-3-14, Mon)
     - `uwot::umap()`

@@ -4,7 +4,10 @@
 \alias{available_methods}
 \title{List dimensionality reduction methods currently available}
 \usage{
-available_methods()
+available_methods(method = "all")
+}
+\arguments{
+\item{method}{one of 'data', 'distance' or 'all' (default)}
 }
 \value{
 A character vector of available DR methods
@@ -16,5 +19,5 @@ This function shows available methods that worked for \code{dr()} function.
 available_methods()
 }
 \author{
-Lang Zhou
+Lang Zhou and Guangchuang Yu
 }

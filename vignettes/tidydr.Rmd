@@ -43,25 +43,12 @@ The `dr()` function apply the function, `fun`, and (if any) parameters to analyz
 
 The data can be original data matrix (or data frame), or distance matrix (or distance object), depending on the requirement of the DR method (specify by the 'fun' parameter).
 
-Currently, the `dr()` function works for the following methods that require data matrix (or data frame).
+Methods supported by the `dr()` function can be listed via the `available_methods()`:
 
-+ `stats::prcomp()`
-+ `Rtsne::Rtsne()`
-+ `uwot::umap()`
-+ `uwot::tumap()`
-+ `uwot::lvish()`
+```{r, message = TRUE}
+available_methods()
+```
 
-And works for the following methods that require distance matrix (or distance object).
-
-- `stats::cmdscale()`
-- `MASS::sammon()`
-- `vegan::metaMDS()`
-- `ape::pcoa()`
-- `smacof::mds()`
-- `vegan::wcmdscale()`
-- `ecodist::pco()`
-- `labdsv::pco()`
-- `ade4::dudi.pco()`
 
 ## Visualization
 
