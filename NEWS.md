@@ -1,3 +1,7 @@
+# tidydr 0.0.4.001
+
++ `autoplot` method for `SingleCellExperiment` object (2022-11-01, Tue)
+
 # tidydr 0.0.4
 
 + added `available_methods()` to show available DR methods (2022-3-15, Tue)
