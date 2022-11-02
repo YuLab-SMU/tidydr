@@ -26,7 +26,7 @@ autoplot.DrResult <- function(object, mapping, ...) {
 ##' @export
 autoplot.SingleCellExperiment <- function(object, mapping = NULL, 
                     dim = 1:2, dimred="UMAP", 
-                    marker = NULL, ...) {
+                    marker = NULL, .fun=NULL, ...) {
     red_dim <- as.matrix(SingleCellExperiment::reducedDim(object, dimred))
     d <- data.frame(red_dim[, dim]) # currently suppose of length 2
     colnames(d) <- c("Dim1", "Dim2")
@@ -54,7 +54,12 @@ autoplot.SingleCellExperiment <- function(object, mapping = NULL,
             expr_type <- get_aes_var(mapping, "colour") # logcounts
             mapping <- modifyList(mapping, aes_string(colour = marker))
 
-            d[[marker]] <- SummarizedExperiment::assay(object, expr_type)[marker, ] # eg STMN1
+            expr_val <- SummarizedExperiment::assay(object, expr_type)[marker, ] # eg STMN1
+            if (is.null(.fun)) {
+                d[[marker]] <- expr_val
+            } else {
+                d[[marker]] <- .fun(expr_val)
+            }
         }
     }
     autoplot.DrResult(d, mapping, ...) + 
