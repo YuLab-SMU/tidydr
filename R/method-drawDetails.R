@@ -2,7 +2,7 @@
 ##' @importFrom grid grid.segments
 ##' @method drawDetails draxis
 ##' @export
-drawDetails.draxis <- function(x, recording=TRUE, id) {
+drawDetails.draxis <- function(x, recording=TRUE) {
     if (x$id == 1) {
         ## axis.line.x.bottom
         grid.segments(x0=0, x1=x$xlength, y0=1, y1=1, default.units = x$default.units, 

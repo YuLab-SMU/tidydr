@@ -9,13 +9,13 @@ ggplot2::autoplot
 ##' @importFrom ggplot2 aes_
 ##' @importFrom utils modifyList
 ##' @export
-autoplot.DrResult <- function(object, mapping, ...) {
+autoplot.DrResult <- function(object, mapping, metadata = NULL, ...) {
     if (missing(mapping) || is.null(mapping)) {
         mapping <- aes_(~Dim1, ~Dim2)
     }else {
         mapping <- modifyList(aes_(~Dim1, ~Dim2), mapping)
     }
-    ggplot(object, mapping, ...) + geom_point()
+    ggplot(object, mapping, metadata=metadata) + geom_point(...)
 }
 
 ##' @importFrom ggfun get_aes_var

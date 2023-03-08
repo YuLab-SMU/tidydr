@@ -1,4 +1,4 @@
-# tidydr 0.0.4.001
+# tidydr 0.0.5
 
 + `autoplot` method for `SingleCellExperiment` object (2022-11-01, Tue)
 
