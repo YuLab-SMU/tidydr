@@ -1,3 +1,8 @@
+# tidydr 0.0.6
+
++ `nk()` for choose k (number of clusters) (2023-03-17, Fri)
+    - output is a `silinfo` object with `print()`, `summary()` and `autoplot()` methods
+    
 # tidydr 0.0.5
 
 + `autoplot` method for `SingleCellExperiment` object (2022-11-01, Tue)

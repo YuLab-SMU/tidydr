@@ -1,6 +1,6 @@
 Package: tidydr
 Title: Unify Dimensionality Reduction Results
-Version: 0.0.5
+Version: 0.0.6
 Authors@R: c(
     person("Guangchuang", "Yu", , "guangchuangyu@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-6485-8781")),

@@ -2,6 +2,34 @@
 ##' @export
 ggplot2::autoplot
 
+##' @importFrom ggplot2 geom_line
+##' @importFrom ggplot2 geom_point
+##' @method autoplot silinfo
+##' @export
+autoplot.silinfo <- function(object, k=NULL, ...) {
+    if (is.null(k)) {
+        x <- summary(object)
+        p <- ggplot(x, aes(K, Silhouette)) + 
+            geom_line(linetype='dashed') + 
+            geom_point(size=3, color='steelblue') +
+            theme_minimal()
+        return(p)
+    }
+
+    #dists=dist(object$data)
+    # calculate MDS
+    #mds=cmdscale(dists)
+    #mds <- as.data.frame(mds)
+    #names(mds) <- c("dim1", "dim2")
+
+    pca <- prcomp(object$data)
+    d <- as.data.frame(pca$x)
+    d$cluster <- factor(object$silinfo[object$k == k][[1]]$widths[, "cluster"])
+    ggplot(d, aes(PC1, PC2)) + 
+        geom_point(aes(color=cluster)) +
+        theme_minimal()
+}
+
 ##' @importFrom ggplot2 autoplot
 ##' @method autoplot DrResult
 ##' @importFrom ggplot2 ggplot
