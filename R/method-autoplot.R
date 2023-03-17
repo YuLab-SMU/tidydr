@@ -4,10 +4,13 @@ ggplot2::autoplot
 
 ##' @importFrom ggplot2 geom_line
 ##' @importFrom ggplot2 geom_point
+##' @importFrom stats prcomp
 ##' @method autoplot silinfo
 ##' @export
 autoplot.silinfo <- function(object, k=NULL, ...) {
     if (is.null(k)) {
+        K <- Silhouette <- NULL
+        
         x <- summary(object)
         p <- ggplot(x, aes(K, Silhouette)) + 
             geom_line(linetype='dashed') + 
@@ -21,6 +24,8 @@ autoplot.silinfo <- function(object, k=NULL, ...) {
     #mds=cmdscale(dists)
     #mds <- as.data.frame(mds)
     #names(mds) <- c("dim1", "dim2")
+    
+    PC1 <- PC2 <- cluster <- NULL
 
     pca <- prcomp(object$data)
     d <- as.data.frame(pca$x)

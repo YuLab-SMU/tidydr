@@ -1,6 +1,6 @@
 Package: tidydr
 Title: Unify Dimensionality Reduction Results
-Version: 0.0.6
+Version: 0.0.5.001
 Authors@R: c(
     person("Guangchuang", "Yu", , "guangchuangyu@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-6485-8781")),
@@ -10,10 +10,12 @@ Authors@R: c(
   )
 Description: Dimensionality reduction (DR) is widely used in many domain for analyzing and visualizing high-dimensional data. 'tidydr' provides uniform output and is compatible with multiple methods, including 'prcomp', 'mds', 'Rtsne'. etc.
 Imports:
+    cluster,
     ggfun,
     ggplot2,
     grid,
     rlang,
+    stats,
     utils
 Suggests:
     knitr,

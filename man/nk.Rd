@@ -24,9 +24,9 @@ The output object can be used to choose the best K (via \code{summary()} or \cod
 \examples{
 x <- nk(iris[,-5], 2:8)
 summary(x)
-to visualize the average silhouete score (y axis) with k (x axis)
+# to visualize the average silhouete score (y axis) with k (x axis)
 autoplot(x)
-to visualize a PCA plot color by the choosing k
+# to visualize a PCA plot color by the choosing k
 autoplot(x, k=3)
 }
 \author{
