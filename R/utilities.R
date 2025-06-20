@@ -1,5 +1,14 @@
-len0_null <- getFromNamespace('len0_null', 'ggplot2')
-modify_list <- getFromNamespace("modify_list", "ggplot2")
+len0_null <- function(x) {
+  if (length(x) == 0) {
+    NULL
+  } else {
+    x
+  }
+}
+modify_list <- function(old, new) {
+  for (i in names(new)) old[[i]] <- new[[i]]
+  old
+}
 .pt <- ggplot2::.pt
 
 
