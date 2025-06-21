@@ -1,5 +1,6 @@
-# tidydr 0.0.5.001
+# tidydr 0.0.6
 
++ S3 method consistency with ggplot2 (v=4.0.0) (2025-06-21, Sat, #4)
 + `nk()` for choose k (number of clusters) (2023-03-17, Fri)
     - output is a `silinfo` object with `print()`, `summary()` and `autoplot()` methods
 
