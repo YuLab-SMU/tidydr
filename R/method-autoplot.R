@@ -19,14 +19,12 @@ autoplot.silinfo <- function(object, k=NULL, ...) {
         return(p)
     }
 
-    #dists=dist(object$data)
-    # calculate MDS
-    #mds=cmdscale(dists)
-    #mds <- as.data.frame(mds)
-    #names(mds) <- c("dim1", "dim2")
-    
     PC1 <- PC2 <- cluster <- NULL
 
+    if (!k %in% object$k) {
+        stop(sprintf("k = %s is not among the candidate k values used in nk(): %s",
+                     k, paste(object$k, collapse = ", ")))
+    }
     pca <- prcomp(object$data)
     d <- as.data.frame(pca$x)
     d$cluster <- factor(object$silinfo[object$k == k][[1]]$widths[, "cluster"])
@@ -39,14 +37,15 @@ autoplot.silinfo <- function(object, k=NULL, ...) {
 ##' @method autoplot DrResult
 ##' @importFrom ggplot2 ggplot
 ##' @importFrom ggplot2 geom_point
-##' @importFrom ggplot2 aes_
 ##' @importFrom utils modifyList
 ##' @export
 autoplot.DrResult <- function(object, mapping, metadata = NULL, ...) {
+    Dim1 <- Dim2 <- NULL
+
     if (missing(mapping) || is.null(mapping)) {
-        mapping <- aes_(~Dim1, ~Dim2)
+        mapping <- aes(x = Dim1, y = Dim2)
     }else {
-        mapping <- modifyList(aes_(~Dim1, ~Dim2), mapping)
+        mapping <- modifyList(aes(x = Dim1, y = Dim2), mapping)
     }
     ggplot(object, mapping, metadata=metadata) + geom_point(...)
 }
@@ -54,7 +53,7 @@ autoplot.DrResult <- function(object, mapping, metadata = NULL, ...) {
 ##' @importFrom ggfun get_aes_var
 ##' @importFrom ggplot2 xlab
 ##' @importFrom ggplot2 ylab
-##' @importFrom ggplot2 aes_string
+##' @importFrom rlang .data
 ##' @method autoplot SingleCellExperiment
 ##' @export
 autoplot.SingleCellExperiment <- function(object, mapping = NULL, 
@@ -85,7 +84,7 @@ autoplot.SingleCellExperiment <- function(object, mapping = NULL,
             # just ignore it
         } else {
             expr_type <- get_aes_var(mapping, "colour") # logcounts
-            mapping <- modifyList(mapping, aes_string(colour = marker))
+            mapping <- modifyList(mapping, aes(colour = .data[[marker]]))
 
             expr_val <- SummarizedExperiment::assay(object, expr_type)[marker, ] # eg STMN1
             if (is.null(.fun)) {

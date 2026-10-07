@@ -9,7 +9,9 @@ nk(data, k)
 \arguments{
 \item{data}{input data (a matrix or data frame)}
 
-\item{k}{a vector of candidate number of clusters}
+\item{k}{a vector of candidate number of clusters
+
+Note: this function calls \code{cluster::pam()} once for each candidate k, and \code{pam()} has O(n^2) time and memory complexity in the number of samples. For large datasets (e.g., thousands of cells/samples), this can be slow or memory-intensive. Consider subsampling the data or reducing the range of k for exploratory use.}
 }
 \value{
 a \code{silinfo} object, which contains 'data' (original data), 'silinfo' (silhouette scores), and k (the input k vector)

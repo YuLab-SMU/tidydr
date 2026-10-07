@@ -24,6 +24,11 @@ as.dr <- function(fun, data, where, ...) {
     class(res) <- c(where, class(res))
     dr_result <- dr_extract(res)
     drdata <- dr_result$drdata
+    if (is.null(drdata)) {
+        stop("dr_extract() could not extract DR coordinates from the result of 'fun'. ",
+             "This method may not be supported. See available_methods() for supported methods, ",
+             "or implement a custom dr_extract method for this result class.")
+    }
     colnames(drdata) <- paste0("Dim", seq_along(drdata))
     eigenvalue <- dr_result$eigenvalue
     stress <- dr_result$stress
@@ -49,7 +54,7 @@ print.DrResult <- function (x, ...) {
         print(x$eigenvalue, ...)
     }
     if (!is.null(x$stress)) {
-        cat(sprintf("Stress: %d\n"), x$stress)
+        cat(sprintf("Stress: %s\n", x$stress))
     }
     d <- dim(x$drdata)
     cat(sprintf("\nDimensionality reduction (n x k) = (%d x %d):\n", d[1], d[2]))

@@ -98,6 +98,9 @@ dr_extract.default <- function(result) {
         stress <- result$stress
         stress <- format(stress, digits=4)
     }
+    if (is.null(drdata)) {
+        warning("Unable to extract DR coordinates from the result (no 'points' field found); this method may not be directly supported by dr_extract(). See available_methods() or implement a custom dr_extract method for this class.")
+    }
     list(drdata = drdata, eigenvalue = eigenvalue, stress = stress)
 }
 

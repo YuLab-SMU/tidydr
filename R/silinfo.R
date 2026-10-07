@@ -5,6 +5,8 @@
 ##' @title nk
 ##' @param data input data (a matrix or data frame)
 ##' @param k a vector of candidate number of clusters
+##'
+##' Note: this function calls `cluster::pam()` once for each candidate k, and `pam()` has O(n^2) time and memory complexity in the number of samples. For large datasets (e.g., thousands of cells/samples), this can be slow or memory-intensive. Consider subsampling the data or reducing the range of k for exploratory use.
 ##' @return a `silinfo` object, which contains 'data' (original data), 'silinfo' (silhouette scores), and k (the input k vector)
 ##' @importFrom cluster pam
 ##' @export
@@ -18,11 +20,7 @@
 ##' @author Guangchuang Yu
 nk <- function(data, k) {
     y = lapply(k, function(i) {
-        # x <- cluster::silhouette(cluster::pam(data, k=i))
-        # mean(x[, "sil_width"])
-
         x <- pam(data, k=i)
-        # x$silinfo$avg.width
         x$silinfo
     })
     structure(list(data = data,
@@ -36,12 +34,17 @@ nk <- function(data, k) {
 ##' @export
 print.silinfo <- function(x, ...) {
     y <- summary(x)
-    k <- y[which.max(y[,2]), 1]
+    best <- which.max(y[,2])
+    k <- y[best, 1]
+    avg.width <- y[best, 2]
 
     msg <- c(
         sprintf("Silhouette information for K = %s", paste0(range(x$k), collapse=":")),
-        sprintf("Best K (number of clusters) is %s", k)
+        sprintf("Best K (number of clusters) is %s (average silhouette width: %.3f)", k, avg.width)
         )
+    if (avg.width < 0.25) {
+        msg <- c(msg, "Note: the silhouette width is relatively low, suggesting the clustering structure may be weak.")
+    }
     cat(msg, sep = "\n")
 }
 
