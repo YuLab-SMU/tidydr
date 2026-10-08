@@ -15,6 +15,13 @@ a list that contains components to construct a 'DrResult' object.
 \description{
 dr_extract generic
 }
+\details{
+\code{dr_extract()} is an S3 generic. Methods are provided for the result classes
+of the supported dimensionality reduction functions. In addition, a fallback
+method is provided for plain numeric matrices: any function passed to \code{dr()}
+that returns a numeric matrix with at least two columns is accepted, and its
+columns are used as the reduced coordinates.
+}
 \author{
 Guangchuang Yu
 }

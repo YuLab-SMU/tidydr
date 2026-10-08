@@ -7,7 +7,7 @@
 nk(data, k)
 }
 \arguments{
-\item{data}{input data (a matrix or data frame)}
+\item{data}{input data (a matrix, data frame, or 'dist' object)}
 
 \item{k}{a vector of candidate number of clusters
 

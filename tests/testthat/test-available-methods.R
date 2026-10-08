@@ -13,3 +13,8 @@ test_that("available_methods returns character vectors", {
 test_that("available_methods errors on invalid method", {
     expect_error(available_methods("foo"), "'arg' should be one of")
 })
+
+test_that("available_methods advertises the numeric-matrix contract", {
+    expect_message(available_methods("distance"), "numeric matrix")
+    expect_message(available_methods("data"), "numeric matrix")
+})

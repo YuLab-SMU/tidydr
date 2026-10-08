@@ -32,15 +32,18 @@ available_methods <- function(method = "all") {
                       "require distance matrix (or distance object) as input:\n",
                       paste("  + ", distance_methods, collapse = "\n"))
 
+    msg_note <- c("\n\nNote: any other function that returns a numeric matrix with\n",
+                  "at least two columns is also accepted (see `?dr_extract`).")
+
     if (method == "all") {
-        message(msg_data, "\n")
-        message(msg_distance)
+        message(msg_data, msg_note, "\n")
+        message(msg_distance, msg_note)
         invisible(c(data_methods, distance_methods))
     } else if (method == "data") {
-        message(msg_data)
+        message(msg_data, msg_note)
         invisible(data_methods)
     } else {
-        message(msg_distance)
+        message(msg_distance, msg_note)
         invisible(distance_methods)
     }
 }
