@@ -22,6 +22,8 @@ Suggests:
     prettydoc,
     SingleCellExperiment,
     SummarizedExperiment,
+    ape,
+    uwot,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 ByteCompile: true
