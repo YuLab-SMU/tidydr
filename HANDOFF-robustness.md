@@ -65,6 +65,14 @@ git status --short   # 期望：无输出
 - **`dr_extract` 分派机制的整体重构**：只在 U4 范围内做"矩阵返回值"的收口，
   不要重写 `env_name(environment(fun))` 这套机制（见 U4 与第 7 节第 4 条）
 
+### 已由操作方拍板，不要再重新讨论
+
+| 议题 | 决定 |
+| --- | --- |
+| data.frame 含非数值列（如 `dr(iris, prcomp)`） | **硬报错**，不做"容忍/自动丢列"（见 U1） |
+| `DESCRIPTION` 的 `Version` | 改为 **`0.0.6.001`**；第 4 段 `.001` 是操作方指定的开发版本号（见第 8 节第 5 步） |
+| 发行版本号（如 `0.0.7`） | **由操作方自己决定**，执行方不得代改 |
+
 ---
 
 ## 3. 硬性不变量（违反即视为失败）
@@ -193,9 +201,10 @@ dr(iris[,1:4], function(d) Rtsne::Rtsne(d, check_duplicates=FALSE))  # OK（150x
 - `data` 为裸数值向量且**不是** `dist` 对象（即 `dr(1:10, prcomp)` 这类；报错时提示
   "若这是距离对象请用 `as.dist()`；若要降维请提供 matrix / data.frame"）
 - `data` 含 `NA` / `NaN` / `Inf`（报错信息说明需要先处理缺失值）
-- `data` 是 data.frame 且含非数值列（iris 的 `Species` 这种；若你判断"允许 data.frame 带
-  非数值列"更合理，必须在报告里说明理由并写测试固定该行为——但 `dr(iris, prcomp)` 这种
-  应当给出可读提示，而不是 prcomp 的 `'x' must be numeric`）
+- `data` 是 data.frame 且含非数值列 → **硬报错**（操作方已拍板，不要再设计"容忍"方案）。
+  `dr(iris, prcomp)`（含 `Species`）必须被拦下并给出 tidydr 语境的报错，
+  不允许透传 prcomp 的 `'x' must be numeric`。报错信息里应说明"哪些列不是数值型"，
+  让用户能直接照做（例如提示用 `iris[, 1:4]` 或先做 one-hot）
 
 **必须保持可用**：`matrix`、数值 `data.frame`、`dist` 对象、以及现有的
 `dr(iris[,1:4], prcomp)` 全部照旧（现有测试即回归网）。
@@ -413,8 +422,17 @@ git worktree add ../tidydr-u5 -b robustness/u5
    Rscript -e 'devtools::check(document=FALSE, cran=FALSE, error_on="never")'
    ```
    期望：**0 errors / 0 warnings / 0 notes**。
-5. **NEWS.md**：在 `# tidydr 0.0.6` 之上新增一个 dev 段落记录本轮改动
-   （是否 bump `Version` 由操作方决定；**不要**擅自改 `Version`）。
+5. **版本号与 NEWS.md**（操作方已拍板）：
+   - 把 `DESCRIPTION` 的 `Version: 0.0.6` 改为 **`Version: 0.0.6.001`** —— 第 4 段 `.001`
+     是操作方指定的**开发版本号**，用于区分"已修稳健性的开发态"。
+     **不要**改成 `0.0.6.9000`、`0.0.7` 或任何其他形式；**发行版本号由操作方自己另行决定**，
+     执行方不得代劳。
+   - 在 `NEWS.md` 顶部新增一个 `# tidydr 0.0.6.001` 段落（放在现有 `# tidydr 0.0.6` 之上），
+     按现有 NEWS 的行文风格（`+ 条目` 缩进、句尾可带日期）逐条记录本轮 5 类改动。
+   - 说明：`package_version("0.0.6.001")` 解析正常，`R CMD check` 对该版本号
+     **不产生任何 error/warning/note**（已实测，DESCRIPTION meta-information 为 OK）。
+     注意 `as.character(packageVersion("tidydr"))` 会规范化为 `"0.0.6.1"`（去掉前导零），
+     这是 R 的正常行为，**不要**为了"看起来一致"而把 DESCRIPTION 写成 `0.0.6.1`。
 6. **报告**（见第 9 节），**不要 commit / push**，除非操作方明确要求。
 
 ### 完成定义（DoD）
@@ -425,6 +443,8 @@ git worktree add ../tidydr-u5 -b robustness/u5
 - [ ] R4 的 `dr(as.dist(dist(iris[,1:4])), stats::cmdscale)` 返回 150x2 的 `DrResult`；
       `dr(iris[,1:4], uwot::umap)` 仍走 `dr_extract.uwot`（有测试固定）
 - [ ] R5 的 `.github/workflows/R-CMD-check.yaml` 存在且 YAML 可解析
+- [ ] `DESCRIPTION` 的 `Version` 已改为 `0.0.6.001`，且 `NEWS.md` 顶部有对应的
+      `# tidydr 0.0.6.001` 段落
 - [ ] `R CMD check` = 0/0/0；全量测试 0 failures
 - [ ] 未触碰 Out of scope 清单中的任何功能项
 - [ ] 未 commit / 未 push
