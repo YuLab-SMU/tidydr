@@ -4,14 +4,32 @@
 \alias{nk}
 \title{nk}
 \usage{
-nk(data, k)
+nk(data, k, fun = pam, ...)
 }
 \arguments{
 \item{data}{input data (a matrix, data frame, or 'dist' object)}
 
-\item{k}{a vector of candidate number of clusters
+\item{k}{a vector of candidate number of clusters}
 
-Note: this function calls \code{cluster::pam()} once for each candidate k, and \code{pam()} has O(n^2) time and memory complexity in the number of samples. For large datasets (e.g., thousands of cells/samples), this can be slow or memory-intensive. Consider subsampling the data or reducing the range of k for exploratory use.}
+\item{fun}{a function to perform the clustering. It must accept the number of
+clusters as its second argument, or through an argument named \code{k} or \code{centers}
+(e.g. \code{cluster::pam}, \code{stats::kmeans}). A method that takes no cluster count
+(e.g. \code{stats::hclust}) is called on the dissimilarity and cut with
+\code{stats::cutree()}. \code{fun} must return either a vector of cluster labels of
+length \code{nrow(data)}, or an object labels can be extracted from
+(\verb{$clustering}, \verb{$cluster} or \verb{$labels}). Defaults to \code{cluster::pam}.
+
+Whether \code{fun} is given a cluster count is decided by inspecting its arguments:
+a \code{k} or \code{centers} argument means yes, a first argument named \code{d} (the
+\code{stats::hclust()} convention) means no. A method that takes a dissimilarity as
+a first argument under some other name, such as \code{cluster::agnes()} or
+\code{cluster::diana()}, is therefore read as taking a cluster count and will fail;
+wrap it so that \code{k} is an argument of its own, e.g.
+\code{nk(x, 2:4, fun = function(z, k) stats::cutree(cluster::agnes(stats::dist(z)), k))}.}
+
+\item{...}{additional parameters passed to \code{fun}
+
+Note: by default this function calls \code{cluster::pam()} once for each candidate k, and \code{pam()} has O(n^2) time and memory complexity in the number of samples. For large datasets (e.g., thousands of cells/samples), this can be slow or memory-intensive. Consider subsampling the data or reducing the range of k for exploratory use.}
 }
 \value{
 a \code{silinfo} object, which contains 'data' (original data), 'silinfo' (silhouette scores), and k (the input k vector)
@@ -22,6 +40,18 @@ Choose best K (number of clusters)
 \details{
 This function calculate the silhouette scores of each K (number of clusters).
 The output object can be used to choose the best K (via \code{summary()} or \code{autoplot()} methods)
+
+The silhouette width is computed with \code{cluster::silhouette()} from the cluster
+labels and the dissimilarity of \code{data} (\code{stats::dist(data)}, unless \code{data} is
+already a 'dist' object, in which case it is used as is). With the default
+\code{fun = cluster::pam} the silhouette information that \code{pam()} computes itself is
+reused verbatim, so the default result is unchanged.
+
+Each element of \verb{$silinfo} follows the shape produced by \code{cluster::pam()}:
+\code{widths} (a matrix with columns \code{cluster}, \code{neighbor} and \code{sil_width}),
+\code{clus.avg.widths} (per-cluster averages) and \code{avg.width} (the overall average).
+The row order of \code{widths} is the one produced by the clusterer, so it should be
+aligned by sample name rather than by position.
 }
 \examples{
 x <- nk(iris[,-5], 2:8)
@@ -30,6 +60,13 @@ summary(x)
 autoplot(x)
 # to visualize a PCA plot color by the choosing k
 autoplot(x, k=3)
+
+# another clustering method
+x2 <- nk(iris[,-5], 2:4, fun = stats::kmeans)
+summary(x2)
+# a hierarchical method is cut automatically
+x3 <- nk(iris[,-5], 2:4, fun = stats::hclust)
+summary(x3)
 }
 \author{
 Guangchuang Yu

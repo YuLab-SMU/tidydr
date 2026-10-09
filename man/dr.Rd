@@ -14,7 +14,7 @@ dr(data, fun, ...)
 \item{...}{additional parameters passed to 'fun'}
 }
 \value{
-a DrResult object, which contains 'data' (original data), 'drdata' (coordination after dimensionality reduction), eigenvalue (standard deviation explained by each dimension) and stress (evaluate the effect of dimensionality reduction)
+a DrResult object, which contains 'data' (original data), 'drdata' (coordination after dimensionality reduction), eigenvalue (standard deviation explained by each dimension), stress (evaluate the effect of dimensionality reduction) and 'sample_info' (method-specific additional information, see Details)
 }
 \description{
 dimensional reduction
@@ -22,6 +22,19 @@ dimensional reduction
 \details{
 This function call the user-provided function ('fun') to
 perform dimensional reduction on the input data ('data')
+
+\code{sample_info} is an optional list that a \code{dr_extract()} method may return
+alongside the coordinates. It is meant to carry method-specific, per-sample
+information (e.g. local density, k-nearest-neighbour indices or cluster
+labels). Every element of \code{sample_info} that holds one value per sample -- a
+vector or factor of length \code{nrow(data)} -- is merged into the data.frame
+returned by \code{\link[ggplot2:fortify]{fortify()}}, using the element name as the column name, so that
+it can be mapped in \code{autoplot()}. Elements that do not hold one value per
+sample, and elements whose name is already taken by a coordinate or a
+metadata column, are not merged and a warning is issued. None of the
+\code{dr_extract()} methods shipped with the package returns a \code{sample_info}
+element, so \code{sample_info} is \code{NULL} unless a custom \code{dr_extract()} method
+supplies one.
 }
 \examples{
 x = dr(iris[,1:4], prcomp)

@@ -86,3 +86,143 @@ test_that("dr(iris[,1:4], uwot::umap) dispatches to dr_extract.uwot", {
     expect_s3_class(x, "DrResult")
     expect_equal(dim(x$drdata), c(150, 2))
 })
+
+## ---- F4: every method advertised by available_methods() -------------------
+##
+## One block per entry of available_methods(), exercised end-to-end through
+## dr(). Methods whose package is not installed are skipped, so the suite stays
+## green on a minimal installation; where the package is present the assertions
+## below are the real, measured behaviour.
+##
+## Sizes are pinned to what was measured locally (iris, n = 150):
+##   prcomp 150x4 | Rtsne 150x2 | umap/tumap/lvish 150x2 | cmdscale 150x2
+##   sammon 149x2 | metaMDS 149x2 | pcoa 150x4 | smacof::mds 150x2
+##   wcmdscale 150x4 | ecodist::pco 150x150 | labdsv::pco 150x2
+##   ade4::dudi.pco 150x4
+## Methods whose dimension count is an upstream implementation detail (the
+## "return every eigenvector" family) are only required to keep 150 rows and at
+## least 2 columns, so a change there is not reported as a tidydr failure.
+
+## -- data-matrix methods ----------------------------------------------------
+
+test_that("dr() works for stats::prcomp()", {
+    x <- dr(iris[,1:4], stats::prcomp)
+    expect_s3_class(x, "DrResult")
+    expect_equal(dim(x$drdata), c(150, 4))
+    expect_equal(length(x$eigenvalue), 4)
+    expect_null(x$stress)
+})
+
+test_that("dr() works for Rtsne::Rtsne()", {
+    skip_if_not_installed("Rtsne")
+    ## upstream: Rtsne() refuses duplicated points and iris has duplicated rows
+    expect_error(dr(iris[,1:4], Rtsne::Rtsne), "duplicates")
+
+    x <- dr(iris[,1:4], Rtsne::Rtsne, check_duplicates = FALSE)
+    expect_s3_class(x, "DrResult")
+    expect_equal(dim(x$drdata), c(150, 2))
+    expect_null(x$eigenvalue)
+})
+
+test_that("dr() works for uwot::umap(), uwot::tumap() and uwot::lvish()", {
+    skip_if_not_installed("uwot")
+    for (f in list(uwot::umap, uwot::tumap, uwot::lvish)) {
+        x <- dr(iris[,1:4], f)
+        expect_s3_class(x, "DrResult")
+        expect_equal(dim(x$drdata), c(150, 2))
+        expect_null(x$eigenvalue)
+        expect_null(x$stress)
+    }
+})
+
+test_that("uwot::lvish() fails when the sample is smaller than its perplexity", {
+    skip_if_not_installed("uwot")
+    ## upstream limitation, pinned so it is not mistaken for a tidydr bug
+    expect_error(dr(iris[1:20, 1:4], uwot::lvish), "perplexity")
+})
+
+## -- distance methods -------------------------------------------------------
+
+test_that("dr() works for stats::cmdscale()", {
+    dd <- as.dist(dist(iris[,1:4]))
+    x <- dr(dd, stats::cmdscale)
+    expect_equal(dim(x$drdata), c(150, 2))
+
+    ## cmdscale(eig = TRUE) returns a list instead of a matrix, which takes the
+    ## dr_extract.default() path
+    y <- dr(dd, stats::cmdscale, eig = TRUE)
+    expect_equal(dim(y$drdata), c(150, 2))
+    expect_equal(length(y$eigenvalue), 150)
+})
+
+test_that("dr() works for MASS::sammon()", {
+    skip_if_not_installed("MASS")
+    dd <- as.dist(dist(iris[,1:4]))
+    ## upstream: the raw iris distance contains a zero/negative distance
+    expect_error(dr(dd, MASS::sammon, trace = FALSE), "zero or negative")
+
+    ded <- iris[!duplicated(iris[,1:4]), 1:4]
+    x <- dr(as.dist(dist(ded)), MASS::sammon, trace = FALSE)
+    expect_equal(dim(x$drdata), c(149, 2))
+    expect_false(is.null(x$stress))
+})
+
+test_that("dr() works for ape::pcoa()", {
+    skip_if_not_installed("ape")
+    x <- dr(as.dist(dist(iris[,1:4])), ape::pcoa)
+    expect_equal(dim(x$drdata), c(150, 4))
+    expect_equal(length(x$eigenvalue), 4)
+})
+
+test_that("dr() works for vegan::metaMDS()", {
+    skip_if_not_installed("vegan")
+    ded <- iris[!duplicated(iris[,1:4]), 1:4]
+    x <- dr(as.dist(dist(ded)), vegan::metaMDS, trace = 0, try = 1, trymax = 1)
+    expect_equal(dim(x$drdata), c(149, 2))
+    expect_false(is.null(x$stress))
+})
+
+test_that("dr() works for smacof::mds()", {
+    skip_if_not_installed("smacof")
+    x <- dr(as.dist(dist(iris[,1:4])), smacof::mds)
+    expect_equal(dim(x$drdata), c(150, 2))
+    expect_false(is.null(x$stress))
+})
+
+test_that("dr() works for vegan::wcmdscale()", {
+    skip_if_not_installed("vegan")
+    ## wcmdscale() returns a bare matrix, so it is handled by dr_extract.matrix();
+    ## it keeps the dimensions with a positive eigenvalue (4 for iris)
+    x <- dr(as.dist(dist(iris[,1:4])), vegan::wcmdscale)
+    expect_s3_class(x, "DrResult")
+    expect_equal(dim(x$drdata), c(150, 4))
+    expect_null(x$eigenvalue)
+})
+
+test_that("dr() works for ecodist::pco()", {
+    skip_if_not_installed("ecodist")
+    x <- dr(as.dist(dist(iris[,1:4])), ecodist::pco)
+    expect_s3_class(x, "DrResult")
+    ## ecodist::pco() returns every eigenvector, not just the first few
+    expect_equal(dim(x$drdata), c(150, 150))
+    expect_equal(length(x$eigenvalue), 150)
+})
+
+test_that("dr() works for labdsv::pco()", {
+    skip_if_not_installed("labdsv")
+    x <- dr(as.dist(dist(iris[,1:4])), labdsv::pco)
+    expect_s3_class(x, "DrResult")
+    ## labdsv::pco() returns k = 2 axes by default, but the full eigenvalue vector
+    expect_equal(dim(x$drdata), c(150, 2))
+    expect_equal(length(x$eigenvalue), 150)
+})
+
+test_that("dr() works for ade4::dudi.pco()", {
+    skip_if_not_installed("ade4")
+    ## scannf = FALSE is required; with the default dudi.pco() asks for the
+    ## number of axes interactively
+    x <- dr(as.dist(dist(iris[,1:4])), ade4::dudi.pco, scannf = FALSE, nf = 2)
+    expect_s3_class(x, "DrResult")
+    expect_equal(dim(x$drdata), c(150, 4))
+    expect_equal(length(x$eigenvalue), 4)
+})

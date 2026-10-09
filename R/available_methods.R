@@ -33,10 +33,15 @@ available_methods <- function(method = "all") {
                       paste("  + ", distance_methods, collapse = "\n"))
 
     msg_note <- c("\n\nNote: any other function that returns a numeric matrix with\n",
-                  "at least two columns is also accepted (see `?dr_extract`).")
+                  "at least two columns is also accepted (see `?dr_extract`).\n",
+                  "Some methods need their own arguments, which are passed through\n",
+                  "`...` of `dr()`, e.g. `dr(d, ade4::dudi.pco, scannf = FALSE)` or\n",
+                  "`dr(x, Rtsne::Rtsne, check_duplicates = FALSE)`.")
 
     if (method == "all") {
-        message(msg_data, msg_note, "\n")
+        ## `msg_note` is shared by the data and the distance listing, so it is
+        ## printed once at the end rather than once per listing.
+        message(msg_data, "\n")
         message(msg_distance, msg_note)
         invisible(c(data_methods, distance_methods))
     } else if (method == "data") {

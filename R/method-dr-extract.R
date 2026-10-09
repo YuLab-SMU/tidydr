@@ -10,6 +10,18 @@
 ##' method is provided for plain numeric matrices: any function passed to `dr()`
 ##' that returns a numeric matrix with at least two columns is accepted, and its
 ##' columns are used as the reduced coordinates.
+##'
+##' The list returned by a method must contain `drdata`, the reduced coordinates:
+##' either a data.frame, or a numeric matrix, with one row per sample and at least
+##' two columns (one per retained dimension). A matrix is converted to a
+##' data.frame, so that [fortify()] -- a 'ggplot2' generic -- always returns a
+##' data.frame. The columns are renamed `Dim1`, `Dim2`, ... by [dr()], and a
+##' `drdata` that is neither a data.frame nor a numeric matrix is rejected.
+##'
+##' `eigenvalue`, `stress` and `sample_info` are optional. `sample_info` is a list
+##' of method-specific, per-sample vectors (e.g. local density or cluster labels),
+##' which [fortify()] merges into its result as extra columns; see [dr()] for the
+##' details.
 ##' @export
 ##' @author Guangchuang Yu
 dr_extract <- function(result) UseMethod("dr_extract")

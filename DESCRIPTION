@@ -1,13 +1,18 @@
 Package: tidydr
 Title: Unify Dimensionality Reduction Results
-Version: 0.0.6.001
+Version: 0.0.6.002
 Authors@R: c(
     person("Guangchuang", "Yu", , "guangchuangyu@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-6485-8781")),
     person("Shuangbin", "Xu", , "xshuangbin@163.com", role = "aut",
            comment = c(ORCID = "0000-0003-3513-5362"))
   )
-Description: Dimensionality reduction (DR) is widely used in many domain for analyzing and visualizing high-dimensional data. 'tidydr' provides uniform output and is compatible with multiple methods, including 'prcomp', 'mds', 'Rtsne'. etc.
+Description: Dimensionality reduction is widely used in many domains for
+    analyzing and visualizing high-dimensional data. 'tidydr' provides uniform
+    output and is compatible with multiple methods, including 'prcomp',
+    'cmdscale', 'Rtsne', 'umap' and 'metaMDS'. Any function returning a numeric
+    matrix can also be used. The unified result can be visualized directly with
+    'ggplot2', and several methods can be run and compared in a single call.
 Imports:
     cluster,
     ggfun,
@@ -23,7 +28,14 @@ Suggests:
     SingleCellExperiment,
     SummarizedExperiment,
     ape,
+    MASS,
+    Rtsne,
     uwot,
+    vegan,
+    smacof,
+    ecodist,
+    ade4,
+    labdsv,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 ByteCompile: true

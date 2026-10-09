@@ -88,3 +88,83 @@ test_that("dr() still accepts matrix, numeric data.frame and dist objects", {
     expect_s3_class(x, "DrResult")
     expect_equal(nrow(x$drdata), 150)
 })
+
+## ---- F3: DrResult 'sample_info' slot -------------------------------------------
+
+test_that("dr() records an 'sample_info' slot, NULL by default", {
+    x <- dr(iris[,1:4], prcomp)
+    expect_true("sample_info" %in% names(x))
+    expect_null(x$sample_info)
+})
+
+test_that("as.dr() carries the 'sample_info' element returned by a dr_extract method", {
+    ## a test-only dr_extract method; S3 dispatch from inside the package
+    ## namespace only sees methods registered there, not methods defined at the
+    ## top level of a test file.
+    registerS3method("dr_extract", "tidydr_sample_info_probe",
+                     function(result) {
+                         list(drdata = as.data.frame(result$points),
+                              eigenvalue = NULL,
+                              stress = NULL,
+                              sample_info = result$sample_info)
+                     },
+                     envir = asNamespace("tidydr"))
+
+    f <- function(d, ...) {
+        structure(list(points = stats::prcomp(d)$x,
+                       sample_info = list(foo = seq_len(nrow(d)))),
+                  class = "tidydr_sample_info_probe")
+    }
+
+    x <- dr(iris[,1:4], f)
+    expect_s3_class(x, "DrResult")
+    expect_equal(nrow(x$drdata), 150)
+    expect_equal(x$sample_info$foo, seq_len(150))
+})
+
+test_that("print.DrResult output is unchanged by a non-empty 'sample_info'", {
+    with_sample_info <- dr(iris[,1:4], prcomp)
+    with_sample_info$sample_info <- list(grp = iris$Species, dens = seq_len(150))
+    plain <- dr(iris[,1:4], prcomp)
+
+    expect_identical(capture.output(print(with_sample_info)),
+                     capture.output(print(plain)))
+    expect_false(any(grepl("sample_info", capture.output(print(with_sample_info)))))
+})
+
+## ---- dr_extract() may return the coordinates as a plain numeric matrix ------
+
+test_that("a dr_extract() method may return 'drdata' as a numeric matrix", {
+    ## `drdata` is a data.frame on every path shipped with the package, but a
+    ## hand-written method may return a bare matrix. That used to fail with
+    ## "length of 'dimnames' [2] not equal to array extent", because the slot was
+    ## named with `seq_along(drdata)` -- which counts *elements* on a matrix.
+    registerS3method("dr_extract", "tidydr_matrix_probe",
+                     function(result) list(drdata = result$pts),
+                     envir = asNamespace("tidydr"))
+
+    f <- function(d, ...) {
+        structure(list(pts = stats::cmdscale(stats::dist(d), k = 2)),
+                  class = "tidydr_matrix_probe")
+    }
+
+    x <- dr(iris[,1:4], f)
+    expect_s3_class(x, "DrResult")
+    ## normalised to a data.frame, so that fortify() (a ggplot2 generic, which
+    ## must return a data.frame) never hands a matrix to ggplot()
+    expect_s3_class(x$drdata, "data.frame")
+    expect_equal(colnames(x$drdata), c("Dim1", "Dim2"))
+    expect_equal(dim(x$drdata), c(150L, 2L))
+    expect_s3_class(fortify(x), "data.frame")
+})
+
+test_that("a dr_extract() method returning neither a data.frame nor a matrix is rejected", {
+    registerS3method("dr_extract", "tidydr_vector_probe",
+                     function(result) list(drdata = seq_len(150)),
+                     envir = asNamespace("tidydr"))
+
+    f <- function(d, ...) structure(list(pts = d), class = "tidydr_vector_probe")
+
+    expect_error(dr(iris[,1:4], f),
+                 "must return 'drdata' as a data.frame or a numeric matrix")
+})

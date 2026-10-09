@@ -21,6 +21,18 @@ of the supported dimensionality reduction functions. In addition, a fallback
 method is provided for plain numeric matrices: any function passed to \code{dr()}
 that returns a numeric matrix with at least two columns is accepted, and its
 columns are used as the reduced coordinates.
+
+The list returned by a method must contain \code{drdata}, the reduced coordinates:
+either a data.frame, or a numeric matrix, with one row per sample and at least
+two columns (one per retained dimension). A matrix is converted to a
+data.frame, so that \code{\link[ggplot2:fortify]{fortify()}} -- a 'ggplot2' generic -- always returns a
+data.frame. The columns are renamed \code{Dim1}, \code{Dim2}, ... by \code{\link[=dr]{dr()}}, and a
+\code{drdata} that is neither a data.frame nor a numeric matrix is rejected.
+
+\code{eigenvalue}, \code{stress} and \code{sample_info} are optional. \code{sample_info} is a list
+of method-specific, per-sample vectors (e.g. local density or cluster labels),
+which \code{\link[ggplot2:fortify]{fortify()}} merges into its result as extra columns; see \code{\link[=dr]{dr()}} for the
+details.
 }
 \author{
 Guangchuang Yu

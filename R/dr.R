@@ -6,7 +6,20 @@
 ##' @param data input data
 ##' @param fun function to perform dimensional reduction
 ##' @param ... additional parameters passed to 'fun'
-##' @return a DrResult object, which contains 'data' (original data), 'drdata' (coordination after dimensionality reduction), eigenvalue (standard deviation explained by each dimension) and stress (evaluate the effect of dimensionality reduction)
+##' @return a DrResult object, which contains 'data' (original data), 'drdata' (coordination after dimensionality reduction), eigenvalue (standard deviation explained by each dimension), stress (evaluate the effect of dimensionality reduction) and 'sample_info' (method-specific additional information, see Details)
+##' @details
+##' `sample_info` is an optional list that a `dr_extract()` method may return
+##' alongside the coordinates. It is meant to carry method-specific, per-sample
+##' information (e.g. local density, k-nearest-neighbour indices or cluster
+##' labels). Every element of `sample_info` that holds one value per sample -- a
+##' vector or factor of length `nrow(data)` -- is merged into the data.frame
+##' returned by [fortify()], using the element name as the column name, so that
+##' it can be mapped in `autoplot()`. Elements that do not hold one value per
+##' sample, and elements whose name is already taken by a coordinate or a
+##' metadata column, are not merged and a warning is issued. None of the
+##' `dr_extract()` methods shipped with the package returns a `sample_info`
+##' element, so `sample_info` is `NULL` unless a custom `dr_extract()` method
+##' supplies one.
 ##' @importFrom rlang env_name
 ##' @export
 ##' @examples
@@ -112,7 +125,23 @@ as.dr <- function(fun, data, where, ...) {
              "This method may not be supported. See available_methods() for supported methods, ",
              "or implement a custom dr_extract method for this result class.")
     }
-    colnames(drdata) <- paste0("Dim", seq_along(drdata))
+    ## `drdata` is a data.frame on every path shipped with the package, but a
+    ## hand-written `dr_extract()` method may return a plain numeric matrix.
+    ## Normalise it: `fortify()` is a ggplot2 generic and must return a
+    ## data.frame, so a matrix must not leak into the `drdata` slot. Anything
+    ## else is rejected with a tidydr-flavoured message rather than a cryptic
+    ## `colnames<-` error.
+    if (!is.data.frame(drdata)) {
+        if (!is.matrix(drdata) || !is.numeric(drdata)) {
+            stop("dr_extract() must return 'drdata' as a data.frame or a numeric matrix, but got ",
+                 class(drdata)[1L], ". See `?dr_extract` for the contract.")
+        }
+        drdata <- as.data.frame(drdata)
+    }
+    ## `seq_len(ncol(drdata))`, not `seq_along(drdata)`: on a matrix `seq_along()`
+    ## counts *elements* (n * k), not columns, so `colnames<-` would fail with
+    ## "length of 'dimnames' [2] not equal to array extent".
+    colnames(drdata) <- paste0("Dim", seq_len(ncol(drdata)))
     eigenvalue <- dr_result$eigenvalue
     stress <- dr_result$stress
     # minimal information for dimensional reduction
@@ -122,6 +151,7 @@ as.dr <- function(fun, data, where, ...) {
             drdata = drdata,
             eigenvalue = eigenvalue,
             stress = stress,
+            sample_info = dr_result$sample_info,
             .call = match.call(expand.dots=TRUE)
         ),
         class = "DrResult"
