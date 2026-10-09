@@ -49,6 +49,29 @@ Methods supported by the `dr()` function can be listed via the `available_method
 available_methods()
 ```
 
+The listing is grouped by the kind of input a method expects; `available_methods("data")` and `available_methods("distance")` show one group each:
+
+```{r, message = TRUE}
+available_methods("distance")
+```
+
+A distance object is passed to `dr()` in the same way as a data matrix, and the result is visualized identically:
+
+```{r}
+d <- dist(iris[, 1:4])
+y <- dr(d, stats::cmdscale)
+autoplot(y, aes(color = Species), metadata = iris[, 5, drop = FALSE]) + theme_dr()
+```
+
+Some methods require their own arguments, which are passed through `...`:
+
+```{r}
+autoplot(dr(iris[, 1:4], prcomp, scale. = TRUE),
+         aes(color = Species), metadata = iris[, 5, drop = FALSE]) + theme_dr()
+```
+
+The same route carries arguments that a method needs to run non-interactively, e.g. `dr(iris[, 1:4], Rtsne::Rtsne, check_duplicates = FALSE)` or `dr(d, ade4::dudi.pco, scannf = FALSE)` -- without `scannf = FALSE` that method stops at an interactive prompt. `available_methods()` repeats these reminders after the listing.
+
 
 ## Visualization
 
@@ -93,12 +116,28 @@ The `summary` lists which methods ran, how many dimensions each produced, and th
 
 ## Clustering and silhouette widths
 
-`nk()` computes the average silhouette width for one or more values of `k`. It uses `cluster::pam()` by default, and any other clustering function can be supplied through `fun`.
+`nk()` computes the average silhouette width for one or more values of `k`. It uses `cluster::pam()` by default, and any other clustering function can be supplied through `fun`:
 
 ```{r}
 si <- nk(iris[, 1:4], 2:4)
 autoplot(si)
 ```
+
+`fun` is given as a function, not a call. A method that takes the number of clusters as its second argument, or through an argument named `k` or `centers`, is used directly:
+
+```{r}
+si_km <- nk(iris[, 1:4], 2:4, fun = stats::kmeans)
+autoplot(si_km)
+```
+
+A method that takes no cluster count, such as `stats::hclust()`, is fitted once and cut with `stats::cutree()` for each `k`:
+
+```{r}
+si_hc <- nk(iris[, 1:4], 2:4, fun = stats::hclust)
+autoplot(si_hc)
+```
+
+The silhouette width is computed with `cluster::silhouette()` for every clusterer except the default `pam()`, whose own silhouette information is reused; `silinfo_widths()` and `autoplot(type = "silhouette")` work the same way in either case.
 
 Passing a `k` that is present in the object draws the samples in the reduced space, coloured by cluster:
 
