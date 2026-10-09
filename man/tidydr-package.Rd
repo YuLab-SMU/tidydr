@@ -6,7 +6,7 @@
 \alias{tidydr-package}
 \title{tidydr: Unify Dimensionality Reduction Results}
 \description{
-Dimensionality reduction (DR) is widely used in many domain for analyzing and visualizing high-dimensional data. 'tidydr' provides uniform output and is compatible with multiple methods, including 'prcomp', 'mds', 'Rtsne'. etc.
+Dimensionality reduction is widely used in many domains for analyzing and visualizing high-dimensional data. 'tidydr' provides uniform output and is compatible with multiple methods, including 'prcomp', 'cmdscale', 'Rtsne', 'umap' and 'metaMDS'. Any function returning a numeric matrix can also be used. The unified result can be visualized directly with 'ggplot2', and several methods can be run and compared in a single call.
 }
 \seealso{
 Useful links:
@@ -21,12 +21,8 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Guangchuang Yu \email{guangchuangyu@gmail.com} (\href{https://orcid.org/0000-0002-6485-8781}{ORCID}) [copyright holder]
   \item Shuangbin Xu \email{xshuangbin@163.com} (\href{https://orcid.org/0000-0003-3513-5362}{ORCID})
-}
-
-Other contributors:
-\itemize{
-  \item Erqiang Hu \email{13766876214@163.com} [contributor]
 }
 
 }

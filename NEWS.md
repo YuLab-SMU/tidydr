@@ -1,4 +1,4 @@
-# tidydr 0.0.6.002
+# tidydr 0.0.7
 
 + `nk()` can now use any clustering method through `fun` (2026-10-08, Thu)
     - `fun` defaults to `cluster::pam`, so the default result is bit-for-bit unchanged
