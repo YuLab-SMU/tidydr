@@ -61,6 +61,9 @@ test_that("available_methods() advertises exactly the methods covered by tests",
 
 test_that("available_methods() tells the user that methods may need their own arguments", {
     expect_message(available_methods("distance"), "scannf")
+    ## ecodist::pco() has no dimension argument and returns every eigenvector,
+    ## so the listing says so instead of leaving a 149-column result unexplained
+    expect_message(available_methods("distance"), "every eigenvector")
     expect_message(available_methods("data"), "check_duplicates")
 })
 

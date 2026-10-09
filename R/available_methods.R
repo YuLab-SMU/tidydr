@@ -36,7 +36,9 @@ available_methods <- function(method = "all") {
                   "at least two columns is also accepted (see `?dr_extract`).\n",
                   "Some methods need their own arguments, which are passed through\n",
                   "`...` of `dr()`, e.g. `dr(d, ade4::dudi.pco, scannf = FALSE)` or\n",
-                  "`dr(x, Rtsne::Rtsne, check_duplicates = FALSE)`.")
+                  "`dr(x, Rtsne::Rtsne, check_duplicates = FALSE)`.\n",
+                  "`ecodist::pco()` returns every eigenvector, so `dr()` keeps all\n",
+                  "n - 1 of them; use `Dim1`/`Dim2` for plotting.")
 
     if (method == "all") {
         ## `msg_note` is shared by the data and the distance listing, so it is
