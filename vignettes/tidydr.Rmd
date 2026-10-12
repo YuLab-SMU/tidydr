@@ -114,6 +114,22 @@ autoplot(r) + theme_dr()
 The `summary` lists which methods ran, how many dimensions each produced, and the error message of any method that did not.
 
 
+## Visualizing SingleCellExperiment objects
+
+`autoplot()` also works directly on a `SingleCellExperiment`: the reduced dimensions named by `dimred` are used as the plot coordinates, and columns of the `colData` can be mapped:
+
+```{r}
+library(SingleCellExperiment)
+sce <- SingleCellExperiment(assays = list(counts = t(iris[, 1:4])),
+                            colData = DataFrame(Species = iris$Species))
+reducedDim(sce, "PCA") <- prcomp(iris[, 1:4])$x[, 1:2]
+
+autoplot(sce, dimred = "PCA", mapping = aes(colour = Species)) + theme_dr()
+```
+
+Without a `mapping`, the samples are drawn uncoloured; with a `marker` gene, the cells are coloured by its expression (see `?autoplot.SingleCellExperiment`).
+
+
 ## Clustering and silhouette widths
 
 `nk()` computes the average silhouette width for one or more values of `k`. It uses `cluster::pam()` by default, and any other clustering function can be supplied through `fun`:
@@ -163,3 +179,18 @@ autoplot(si, k = 3, type = "silhouette") + theme_dr()
 ## Method-specific information
 
 A `dr_extract()` method may return a `sample_info` element alongside the coordinates. `fortify()` merges any element of `sample_info` that holds one value per sample into the returned data frame as an additional column, so it can be mapped in `aes()`. None of the `dr_extract()` methods shipped with `tidydr` returns one, so `sample_info` is `NULL` unless you write a method yourself; see `?dr` and `?dr_extract` for the details.
+
+
+## Input validation
+
+`dr()` and `nk()` check their inputs and fail early with a tidydr-specific message instead of forwarding an obscure error from the underlying method. `dr()` rejects `NULL`, bare vectors (with a hint to use `as.dist()` for distance vectors), non-numeric columns, and `NA`/`NaN`/`Inf` values:
+
+```{r error=TRUE}
+dr(c(1, 2, 3), prcomp)
+```
+
+`nk()` rejects `k` values for which the silhouette width is undefined or cannot be computed, e.g. `k = 1`:
+
+```{r error=TRUE}
+nk(iris[, 1:4], 1)
+```
