@@ -129,6 +129,8 @@ autoplot(sce, dimred = "PCA", mapping = aes(colour = Species)) + theme_dr()
 
 Without a `mapping`, the samples are drawn uncoloured; with a `marker` gene, the cells are coloured by its expression (see `?autoplot.SingleCellExperiment`).
 
+For single cell and spatial transcriptomics data, where embeddings are drawn with outlines, density surfaces and spatial coordinates, the [*ggsc*](https://yulab-smu.top/ggsc/) package provides the specialised layers (`sc_dim()`, `sc_feature()`, `sc_dot()`, `sc_violin()`, `sc_spatial()` and the `sc_dim_geom_*()` layers). It accepts a `SingleCellExperiment` whose reduced dimensions were computed with `dr()`, and imports `theme_dr()` from this package, so the two can be combined directly.
+
 
 ## Clustering and silhouette widths
 
